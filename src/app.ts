@@ -11,7 +11,7 @@ app
 .use(credentialRouter)
 .use(wifiRoutes)
 
-const port = +process.env.PORT || 6000;
+const port = +process.env.PORT || 9400;
 app.listen(port, () => {
   console.log(`Server is up and running on port: ${port}`);
 });

@@ -8,8 +8,8 @@ const credentialRouter = Router();
 
 credentialRouter.post(
   "/credentials",
-  validate.validateCredential(credentialSchema),
   auth.hasToken,
+  validate.validateCredential(credentialSchema),
   crendential.createCredential
 );
 

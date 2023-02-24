@@ -17,7 +17,7 @@ afterAll(async () => {
 const server = supertest(app);
 
 describe("POST /signin", () => {
-jest.setTimeout(70000);
+jest.setTimeout(50000);
  it("should respond with status 422 when body is not given", async () => {
     const result = await server.post("/signin");
     expect(result.status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
@@ -83,6 +83,7 @@ jest.setTimeout(70000);
 
 
   describe("POST /signup", () => {
+    jest.setTimeout(50000);
     it("should respond with status 422 when invalid body", async () => {
       const result = await server.post("/signup");
       expect(result.status).toBe(httpStatus.UNPROCESSABLE_ENTITY);

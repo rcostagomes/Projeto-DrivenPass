@@ -8,10 +8,19 @@ const userId = res.locals.user;
 try{
 await credentialService.createCredential({url,username,password,title,userId})
  return res.sendStatus(httpStatus.CREATED)   
-}catch (err) {
-    console.log(err);
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+
+}catch(err) {
+  console.log(err)
+  if(err.name === "NOT_FOUND"){
+  return res.status(httpStatus.NOT_FOUND).send(err)
   }
+  
+  if(err.name === "ConflictError" ){
+    return res.status(httpStatus.UNAUTHORIZED).send(err)
+  }
+  
+  return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
+}
 
 }
 
@@ -49,7 +58,7 @@ export async function deletCredential(req:Request,res:Response) {
 
     try{
       await credentialService.deletCredential(parseInt(id),userId)
-      return res.sendStatus(httpStatus.OK)
+      return res.sendStatus(httpStatus.ACCEPTED)
     }catch (err) {
     console.log(err);
     return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);

@@ -20,7 +20,7 @@ export async function createCredential(credential: Credential) {
       userId,
     });
   } catch (err) {
-    throw err;
+    throw conflictError();
   }
 }
 
@@ -34,61 +34,59 @@ export async function credentialExist(title: string, userId: number) {
     throw titleExist();
   }
 }
-
 async function encryptPassword(password: string) {
   const encryptedPassword = cryptr.encrypt(password);
 
   return encryptedPassword;
 }
 
-export async function crendentialById(userId:number) {
-    const credentialUser = await credentialRepository.credentialById(userId)
-    const newCredential = credentialUser.map((credential)=>{
-        return {
-            ...credential,
-            password: cryptr.decrypt(credential.password)
-        }
-    })
+export async function crendentialById(userId: number) {
+  const credentialUser = await credentialRepository.credentialById(userId);
+  const newCredential = credentialUser.map((credential) => {
+    return {
+      ...credential,
+      password: cryptr.decrypt(credential.password),
+    };
+  });
 
-    return newCredential;
+  return newCredential;
 }
 
-
-export async function findCredential(id:number,userId:number) {
-const credential = await credentialRepository.UserIsValid(id)
-if(credential.userId !== userId ){
+export async function findCredential(id: number, userId: number) {
+  const credential = await credentialRepository.UserIsValid(id);
+  if (credential.userId !== userId) {
     throw invalidRequest();
+  }
+
+  const newPass = cryptr.decrypt(credential.password);
+
+  const { title, username } = credential;
+  const credentialInfo = {
+    id: credential.id,
+    title: title,
+    username: username,
+    password: newPass,
+    userId: credential.userId,
+  };
+
+  return credentialInfo;
 }
 
-const newPass = cryptr.decrypt(credential.password)
+async function deletCredential(id: number, userId: number) {
+  const credential = await credentialRepository.UserIsValid(id);
+  if (credential.userId !== userId) {
+    throw invalidRequest();
+  }
 
-const {title,username} = credential
-const credentialInfo = {
-id:credential.id,
-title:title,
-username:username,
-password:newPass,
-userId:credential.userId
-}
-
-return credentialInfo;
-}
-
-async function deletCredential(id:number, userId:number) {
-    const credential = await credentialRepository.UserIsValid(id);
-    if(credential.userId !== userId ){
-        throw invalidRequest();
-    }
-
-    await credentialRepository.deletCredential(id)
+  await credentialRepository.deletCredential(id);
 }
 
 const credentialService = {
-    createCredential,
-    credentialExist,
-    crendentialById,
-    findCredential,
-    deletCredential,
-}
+  createCredential,
+  credentialExist,
+  crendentialById,
+  findCredential,
+  deletCredential,
+};
 
-export default credentialService
+export default credentialService;
