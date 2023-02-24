@@ -4,7 +4,6 @@ import httpStatus from "http-status";
 import supertest from "supertest";
 import { create_user } from "../factories/auth-factories";
 import { cleanDb } from "../helpers";
-import { disconnectDB } from "config/disconectDB";
 
 beforeEach(async () => {
   await cleanDb();
